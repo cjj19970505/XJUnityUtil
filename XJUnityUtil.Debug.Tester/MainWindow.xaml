@@ -1,0 +1,14 @@
+﻿<Window x:Class="XJUnityUtil.Debug.Tester.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XJUnityUtil.Debug.Tester"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <TextBox x:Name="SendTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Margin="40,41,0,0"/>
+        <Button x:Name="SendBtn" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="40,96,0,0" Click="SendBtn_Click"/>
+
+    </Grid>
+</Window>

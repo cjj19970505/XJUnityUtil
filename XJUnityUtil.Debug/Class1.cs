@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XJUnityUtil
+namespace XJUnityUtil.Debug
 {
     public class Class1
     {
