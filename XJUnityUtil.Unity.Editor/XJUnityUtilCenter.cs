@@ -6,12 +6,13 @@ namespace XJUnityUtil.Unity
 {
     public class XJUnityUtilCenter : MonoBehaviour
     {
-        public ICommToApplication CommToApplication { get; private set; }
-        public EditorCommToUnity EditorCommToUnity;
+        public ICommToApplication CommToUnity { get; private set; }
+
+        public EditorCommToApp EditorCommToApp;
         // Start is called before the first frame update
         void Start()
         {
-            CommToApplication = EditorCommToUnity;
+            CommToUnity = EditorCommToApp;
         }
 
         // Update is called once per frame
@@ -19,6 +20,8 @@ namespace XJUnityUtil.Unity
         {
             
         }
+
+
     }
 }
 

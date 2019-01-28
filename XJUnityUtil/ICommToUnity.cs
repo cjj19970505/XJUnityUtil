@@ -15,7 +15,7 @@ namespace XJUnityUtil
         /// "/"符号保留作控制符，不要在要发送的字符串中包含这个字符
         /// </summary>
         /// <param name="value"></param>
-        void SendMessage(string value);
+        void SendStringMessage(string value);
     }
 
     /// <summary>
@@ -24,6 +24,6 @@ namespace XJUnityUtil
     public interface ICommToApplication
     {
         event EventHandler<string> Received;
-        void SendMessage(string value);
+        void SendStringMessage(string value);
     }
 }

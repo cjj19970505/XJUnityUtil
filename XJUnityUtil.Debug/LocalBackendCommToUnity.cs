@@ -17,7 +17,7 @@ namespace XJUnityUtil.Debug
         private Task _ServerTask;
         public int Port { get; }
 
-        public void SendMessage(string value)
+        public void SendStringMessage(string value)
         {
 
             _UnfetchedMessageBuffer.Enqueue(value);
@@ -84,6 +84,18 @@ namespace XJUnityUtil.Debug
                             Stream output = response.OutputStream;
                             output.Write(responseBuffer, 0, responseBuffer.Length);
                         }
+                    }
+                    else if (request.HttpMethod == "POST")
+                    {
+                        StreamReader streamReader = new StreamReader(request.InputStream);
+                        string s = await streamReader.ReadToEndAsync();
+                        s = s.Replace("%20", " ");
+                        s = s.Replace("%3a", ":");
+                        s = s.Replace("%7c", "|");
+                        s = s.Replace("%2c", ",");
+                        string[] sArray = s.Split('=');
+                        System.Diagnostics.Debug.WriteLine(s);
+                        
                     }
 
 

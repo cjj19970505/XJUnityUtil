@@ -34,7 +34,7 @@ namespace XJUnityUtil.Debug.Tester
 
         private void SendBtn_Click(object sender, RoutedEventArgs e)
         {
-            UnityAppCommManager.CommToUnity.SendMessage(SendTextBox.Text);
+            UnityAppCommManager.CommToUnity.SendStringMessage(SendTextBox.Text);
         }
     }
 }

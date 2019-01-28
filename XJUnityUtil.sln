@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XJUnityUtil.Debug", "XJUnit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XJUnityUtil.Debug.Tester", "XJUnityUtil.Debug.Tester\XJUnityUtil.Debug.Tester.csproj", "{E1EC7C5A-8A79-448D-953B-DE8415073204}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XJUnityUtil.Unity.Editor", "XJUnityUtil.Unity.Editor\XJUnityUtil.Unity.Editor.csproj", "{75D8D05D-2843-48D5-B9AF-CAB21364A63C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XJUnityUtil.Unity", "XJUnityUtil.Unity.Editor\XJUnityUtil.Unity.csproj", "{75D8D05D-2843-48D5-B9AF-CAB21364A63C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,9 +6,9 @@ using UnityEngine.Networking;
 
 namespace XJUnityUtil.Unity
 {
-    public class EditorCommToUnity : MonoBehaviour, ICommToApplication
+    public class EditorCommToApp : MonoBehaviour, ICommToApplication
     {
-        public int Port;
+        public int EditorDebugPort;
         public event EventHandler<string> Received;
         private List<string> _ReceivedMessageBuffer;
 
@@ -33,7 +33,7 @@ namespace XJUnityUtil.Unity
         {
             while (true)
             {
-                UnityWebRequest www = UnityWebRequest.Get("http://localhost:" + Port + "/getmessage/");
+                UnityWebRequest www = UnityWebRequest.Get("http://localhost:" + EditorDebugPort + "/getmessage/");
                 yield return www.SendWebRequest();
                 if (www.isNetworkError || www.isHttpError)
                 {
@@ -49,9 +49,19 @@ namespace XJUnityUtil.Unity
                     }
                 }
             }
+        }
 
+        public void SendStringMessage(string value)
+        {
+            StartCoroutine(_EditorSendDataPostRequest(value));
+        }
 
-
+        IEnumerator _EditorSendDataPostRequest(string message)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("MESSAGE", message);
+            WWW www = new WWW("http://localhost:" + EditorDebugPort + "/", form);
+            yield return www;
         }
     }
 }

@@ -7,8 +7,8 @@
     <ProjectGuid>{75D8D05D-2843-48D5-B9AF-CAB21364A63C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XJUnityUtil.Unity.Editor</RootNamespace>
-    <AssemblyName>XJUnityUtil.Unity.Editor</AssemblyName>
+    <RootNamespace>XJUnityUtil.Unity</RootNamespace>
+    <AssemblyName>XJUnityUtil.Unity</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -73,7 +73,7 @@
     <ProjectReference Include="..\XJUnityUtil\XJUnityUtil.csproj">
       <Project>{86e7cb8f-dfe3-4a67-9663-3bc1c8a2b4c7}</Project>
       <Name>XJUnityUtil</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
