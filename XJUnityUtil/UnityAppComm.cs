@@ -10,5 +10,7 @@ namespace XJUnityUtil
         public ICommToApplication CommToApplication { get; set; }
 
         
+
+        
     }
 }

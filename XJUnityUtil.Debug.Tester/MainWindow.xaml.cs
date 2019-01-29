@@ -26,10 +26,13 @@ namespace XJUnityUtil.Debug.Tester
             InitializeComponent();
             UnityAppCommManager = new UnityAppCommManager();
             LocalBackendCommToUnity localBackendCommToUnity = new LocalBackendCommToUnity(UnityAppCommManager, 8043);
-
             UnityAppCommManager.CommToUnity = localBackendCommToUnity;
-            
+            localBackendCommToUnity.Received += _OnReceived;
+        }
 
+        private void _OnReceived(object sender, string e)
+        {
+            System.Diagnostics.Debug.WriteLine(e);
         }
 
         private void SendBtn_Click(object sender, RoutedEventArgs e)
