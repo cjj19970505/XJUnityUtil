@@ -65,7 +65,7 @@ namespace XJUnityUtil.Debug
                             string s = "";
                             foreach (var buffer in bufferArray)
                             {
-                                s += buffer.ToString();
+                                s += HttpUtility.UrlEncode(buffer.ToString());
                                 s += '/';
                             }
                             

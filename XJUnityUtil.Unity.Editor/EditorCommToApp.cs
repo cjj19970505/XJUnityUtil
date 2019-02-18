@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Web;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -44,8 +45,9 @@ namespace XJUnityUtil.Unity
                     string[] messages = www.downloadHandler.text.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string message in messages)
                     {
-                        _ReceivedMessageBuffer.Add(message);
-                        Debug.Log("NEW_MESSAGE::" + message);
+                        var decodedMessage = HttpUtility.UrlDecode(message);
+                        _ReceivedMessageBuffer.Add(decodedMessage);
+                        Debug.Log("NEW_MESSAGE::" + decodedMessage);
                     }
                 }
             }

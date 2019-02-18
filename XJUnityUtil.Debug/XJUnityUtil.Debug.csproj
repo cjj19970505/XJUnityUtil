@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\XJUnityUtil\XJUnityUtil.csproj" />
+    <ProjectReference Include="..\XJUnityUtil\XJUnityUtil.csproj">
+      <Private>true</Private>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

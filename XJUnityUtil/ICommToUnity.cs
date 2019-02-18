@@ -10,11 +10,6 @@ namespace XJUnityUtil
     public interface ICommToUnity
     {
         event EventHandler<string> Received;
-
-        /// <summary>
-        /// "/"符号保留作控制符，不要在要发送的字符串中包含这个字符
-        /// </summary>
-        /// <param name="value"></param>
         void SendStringMessage(string value);
     }
 
