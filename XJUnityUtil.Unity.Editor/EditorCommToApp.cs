@@ -42,12 +42,31 @@ namespace XJUnityUtil.Unity
                 }
                 else
                 {
-                    string[] messages = www.downloadHandler.text.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string message in messages)
+                    string[] messagesString = www.downloadHandler.text.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string messageString in messagesString)
                     {
-                        var decodedMessage = HttpUtility.UrlDecode(message);
-                        _ReceivedMessageBuffer.Add(decodedMessage);
-                        Debug.Log("NEW_MESSAGE::" + decodedMessage);
+                        UnityAppCommManager.Message decodedMessage = new UnityAppCommManager.Message();
+                        string[] pairsStrings = messageString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string pairString in pairsStrings)
+                        {
+                            string[] pairStrings = pairString.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                            string key = pairStrings[0];
+                            string value = pairStrings[1];
+                            if (key == "UUID")
+                            {
+                                decodedMessage.Uuid = Guid.Parse(value);
+                            }
+                            else if (key == "ResponseNeeded")
+                            {
+                                decodedMessage.ResponseNeeded = bool.Parse(value);
+                            }
+                            else if (key == "MESSAGE_0")
+                            {
+                                decodedMessage.Value = value;
+                            }
+                        }
+                        //_ReceivedMessageBuffer.Add(decodedMessage);
+                        Debug.Log("NEW_MESSAGE::\n" + decodedMessage);
                     }
                 }
             }

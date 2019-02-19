@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using static XJUnityUtil.UnityAppCommManager;
 
 namespace XJUnityUtil.Debug
 {
@@ -13,20 +14,26 @@ namespace XJUnityUtil.Debug
         public event EventHandler<string> Received;
 
         public UnityAppCommManager UnityAppCommManager { get; }
-        public Queue<string> _UnfetchedMessageBuffer;
+        public Queue<Message> _UnfetchedMessageBuffer;
         private object _UnfetchedMessageBufferLock;
         private Task _ServerTask;
         public int Port { get; }
 
-        public void SendStringMessage(string value)
+        private readonly Dictionary<Guid, Message> _WaitForResultMessages;
+        
+        private readonly object _WaitForResultMessagesLock;
+
+        public void SendStringMessage(params string[] values)
         {
-            _UnfetchedMessageBuffer.Enqueue(value);
+            _UnfetchedMessageBuffer.Enqueue(new Message(false, values));
         }
 
         public LocalBackendCommToUnity(UnityAppCommManager unityAppCommManager, int port)
         {
-            _UnfetchedMessageBuffer = new Queue<string>();
+            _UnfetchedMessageBuffer = new Queue<Message>();
             _UnfetchedMessageBufferLock = new object();
+            _WaitForResultMessages = new Dictionary<Guid, Message>();
+            _WaitForResultMessagesLock = new object();
             Port = port;
             _ServerTask = _StartServerAsync();
         }
@@ -56,21 +63,40 @@ namespace XJUnityUtil.Debug
                         byte[] responseBuffer = null;
                         if (segments.Length >= 2 && segments[1] == "getmessage/")
                         {
-                            string[] bufferArray;
+                            UnityAppCommManager.Message[] bufferArray;
                             lock (_UnfetchedMessageBufferLock)
                             {
                                 bufferArray = _UnfetchedMessageBuffer.ToArray();
                                 _UnfetchedMessageBuffer.Clear();
                             }
-                            string s = "";
+                            StringBuilder sb = new StringBuilder();
                             foreach (var buffer in bufferArray)
                             {
-                                s += HttpUtility.UrlEncode(buffer.ToString());
-                                s += '/';
+                                if (buffer.ResponseNeeded)
+                                {
+                                    lock (_WaitForResultMessagesLock)
+                                    {
+                                        _WaitForResultMessages.Add(buffer.Uuid, buffer);
+                                    }
+                                }
+                                
+                                sb.Append("UUID:" + buffer.Uuid.ToString());
+                                sb.Append(" ");
+                                sb.Append("ResponseNeeded:" + buffer.ResponseNeeded);
+                                sb.Append(" ");
+                                for(int i = 0; i < buffer.ValueList.Count; i++)
+                                {
+                                    sb.Append("VALUE_"+i+":" + HttpUtility.UrlEncode(buffer.ValueList[i]));
+                                    sb.Append(" ");
+                                }
+                                
+                                sb.Append("/");
+                                
                             }
-                            
+                            var s = sb.ToString();
                             responseBuffer = Encoding.Default.GetBytes(s);
                             response.ContentLength64 = responseBuffer.LongLength;
+                            
                             Stream output = response.OutputStream;
                             output.Write(responseBuffer, 0, responseBuffer.Length);
                         }
@@ -87,23 +113,31 @@ namespace XJUnityUtil.Debug
                         StreamReader streamReader = new StreamReader(request.InputStream);
                         string requestString = await streamReader.ReadToEndAsync();
                         var fieldValueDict = _GetFieldValueDict(requestString);
-                        
-                        if (fieldValueDict.ContainsKey("message"))
+
+                        if (fieldValueDict.ContainsKey("type"))
                         {
-                            Received?.Invoke(this, fieldValueDict["message"]);
+                            if(fieldValueDict["type"] == "Send")
+                            {
+                                Received?.Invoke(this, fieldValueDict["message"]);
+                            }
+                            else if (fieldValueDict["type"] == "Result")
+                            {
+                                lock (_WaitForResultMessagesLock)
+                                {
+                                    Guid uuid = Guid.Parse(fieldValueDict["uuid"]);
+                                    _WaitForResultMessages[uuid].ResponseMessage = fieldValueDict["message"];
+                                    _WaitForResultMessages[uuid].Responsed = true;
+                                    
+                                    
+                                }
+                            }
                         }
-                        /*
-                        foreach(var pair in fieldValueDict)
-                        {
-                            System.Diagnostics.Debug.WriteLine(pair.Key + " ::::: " + pair.Value);
-                        }
-                        */
                     }
                 }
             }
             catch (Exception e)
             {
-
+                System.Diagnostics.Debug.WriteLine("XJ:::SERVER FAILED");
             }
         }
 
@@ -128,5 +162,20 @@ namespace XJUnityUtil.Debug
             }
             return fieldValueDict;
         }
+
+        public Task<string> SendStringMessageForResultAsync(params string[] values)
+        {
+            Message message = new Message(true, values);
+            _UnfetchedMessageBuffer.Enqueue(message);
+            return Task.Run<string>(() =>
+            {
+                while (!message.Responsed)
+                {
+                }
+                return message.ResponseMessage;
+            });
+        }
     }
+
+    
 }

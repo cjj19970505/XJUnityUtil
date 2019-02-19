@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace XJUnityUtil
 {
+    public delegate void CommToApplicationReceiveMessageHandler(ICommToApplication CommToApp, UnityAppCommManager.Message message);
     /// <summary>
     /// Implement on DotNet End
     /// </summary>
     public interface ICommToUnity
     {
         event EventHandler<string> Received;
-        void SendStringMessage(string value);
+
+        void SendStringMessage(params string[] values);
+        Task<string> SendStringMessageForResultAsync(params string[] values);
+
     }
 
     /// <summary>
@@ -18,7 +23,8 @@ namespace XJUnityUtil
     /// </summary>
     public interface ICommToApplication
     {
-        event EventHandler<string> Received;
+        event CommToApplicationReceiveMessageHandler Received;
         void SendStringMessage(string value);
+        void SendResult(UnityAppCommManager.Message message, string responseValue);
     }
 }

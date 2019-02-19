@@ -37,7 +37,13 @@ namespace XJUnityUtil.Debug.Tester
 
         private void SendBtn_Click(object sender, RoutedEventArgs e)
         {
-            UnityAppCommManager.CommToUnity.SendStringMessage(SendTextBox.Text);
+            UnityAppCommManager.CommToUnity.SendStringMessage(SendTextBox.Text, "Sdfsdf", "CHENHYBHUA");
+        }
+
+        private async void SendForResultBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string s = await UnityAppCommManager.CommToUnity.SendStringMessageForResultAsync(SendTextBox.Text, "Sdfsdf", "CHENHYBHUA");
+            System.Diagnostics.Debug.WriteLine("HELO"+s);
         }
     }
 }

@@ -9,6 +9,7 @@
     <Grid>
         <TextBox x:Name="SendTextBox" HorizontalAlignment="Left" Height="152" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Margin="40,41,0,0" AcceptsReturn="True" AcceptsTab="True"/>
         <Button x:Name="SendBtn" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="40,216,0,0" Click="SendBtn_Click"/>
+        <Button x:Name="SendForResultBtn" Content="SendForResult" HorizontalAlignment="Left" VerticalAlignment="Top" Width="141" Margin="146,216,0,0" Click="SendForResultBtn_Click"/>
 
     </Grid>
 </Window>
