@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Web;
+using System.Xml.Serialization;
 
 namespace XJUnityUtil
 {
@@ -12,27 +16,32 @@ namespace XJUnityUtil
         public class Message
         {
             public Guid Uuid { get; set; }
-            //public string Value { get; set; }
-            public List<string> ValueList { get; }
+            public Guid ResponseToUuid { get; set; }
+            public string ResponseMessage { get; set; }
             public bool ResponseNeeded { get; set; }
             public bool Responsed { get; set; }
-            public string ResponseMessage { get; set; }
-            public Message(bool responseNeeded, params string[] values)
+            public bool IsResponse { get; set; }
+            public List<string> ValueList { get; set; }
+
+            public Message(bool responseNeeded, params string[] values):this()
             {
-                ValueList = new List<string>();
-                Uuid = Guid.NewGuid();
                 ResponseNeeded = responseNeeded;
-                Responsed = false;
                 ValueList.AddRange(values);
             }
             public Message()
             {
+                Uuid = Guid.NewGuid();
                 ValueList = new List<string>();
+                ResponseNeeded = false;
                 Responsed = false;
+                ResponseMessage = "";
+                IsResponse = false;
+                ResponseToUuid = Guid.Empty;
             }
 
             public override string ToString()
             {
+
                 StringBuilder sb = new StringBuilder();
                 sb.Append("UUID:" + Uuid);
                 sb.AppendLine();
@@ -44,6 +53,19 @@ namespace XJUnityUtil
                 }
 
                 return sb.ToString();
+            }
+
+            public string EncodeToString()
+            {
+                return JsonConvert.SerializeObject(this);
+                
+            }
+
+            public static Message FromString(string encodedMessageString)
+            {
+                Message m = JsonConvert.DeserializeObject<Message>(encodedMessageString);
+                return m;
+
             }
         }
 

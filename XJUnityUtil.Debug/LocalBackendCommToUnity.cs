@@ -20,8 +20,11 @@ namespace XJUnityUtil.Debug
         public int Port { get; }
 
         private readonly Dictionary<Guid, Message> _WaitForResultMessages;
-        
         private readonly object _WaitForResultMessagesLock;
+        private readonly Dictionary<Guid, UnityAppCommManager.Message> _ResponseMessages;
+        private readonly object _ResponseMessagesLock;
+
+
 
         public void SendStringMessage(params string[] values)
         {
@@ -34,6 +37,9 @@ namespace XJUnityUtil.Debug
             _UnfetchedMessageBufferLock = new object();
             _WaitForResultMessages = new Dictionary<Guid, Message>();
             _WaitForResultMessagesLock = new object();
+            _ResponseMessages = new Dictionary<Guid, Message>();
+            _ResponseMessagesLock = new object();
+
             Port = port;
             _ServerTask = _StartServerAsync();
         }
@@ -72,26 +78,8 @@ namespace XJUnityUtil.Debug
                             StringBuilder sb = new StringBuilder();
                             foreach (var buffer in bufferArray)
                             {
-                                if (buffer.ResponseNeeded)
-                                {
-                                    lock (_WaitForResultMessagesLock)
-                                    {
-                                        _WaitForResultMessages.Add(buffer.Uuid, buffer);
-                                    }
-                                }
-                                
-                                sb.Append("UUID:" + buffer.Uuid.ToString());
-                                sb.Append(" ");
-                                sb.Append("ResponseNeeded:" + buffer.ResponseNeeded);
-                                sb.Append(" ");
-                                for(int i = 0; i < buffer.ValueList.Count; i++)
-                                {
-                                    sb.Append("VALUE_"+i+":" + HttpUtility.UrlEncode(buffer.ValueList[i]));
-                                    sb.Append(" ");
-                                }
-                                
+                                sb.Append(HttpUtility.UrlEncode(buffer.EncodeToString()));
                                 sb.Append("/");
-                                
                             }
                             var s = sb.ToString();
                             responseBuffer = Encoding.Default.GetBytes(s);
@@ -118,7 +106,21 @@ namespace XJUnityUtil.Debug
                         {
                             if(fieldValueDict["type"] == "Send")
                             {
-                                Received?.Invoke(this, fieldValueDict["message"]);
+                                if (fieldValueDict.ContainsKey("message"))
+                                {
+                                    Message message = Message.FromString(fieldValueDict["message"]);
+                                    if (message.IsResponse)
+                                    {
+                                        lock (_ResponseMessagesLock)
+                                        {
+                                            _ResponseMessages.Add(message.ResponseToUuid, message);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Received?.Invoke(this, message.ValueList[0]);
+                                    }
+                                }
                             }
                             else if (fieldValueDict["type"] == "Result")
                             {
@@ -127,7 +129,6 @@ namespace XJUnityUtil.Debug
                                     Guid uuid = Guid.Parse(fieldValueDict["uuid"]);
                                     _WaitForResultMessages[uuid].ResponseMessage = fieldValueDict["message"];
                                     _WaitForResultMessages[uuid].Responsed = true;
-                                    
                                     
                                 }
                             }
@@ -165,14 +166,49 @@ namespace XJUnityUtil.Debug
 
         public Task<string> SendStringMessageForResultAsync(params string[] values)
         {
+            /*
             Message message = new Message(true, values);
             _UnfetchedMessageBuffer.Enqueue(message);
             return Task.Run<string>(() =>
             {
                 while (!message.Responsed)
                 {
+                    
                 }
                 return message.ResponseMessage;
+            });*/
+
+            UnityAppCommManager.Message message = new UnityAppCommManager.Message();
+            message.ResponseNeeded = true;
+            message.ValueList.AddRange(values);
+            lock (_WaitForResultMessagesLock)
+            {
+                _WaitForResultMessages.Add(message.Uuid, message);
+            }
+            lock (_UnfetchedMessageBufferLock)
+            {
+                _UnfetchedMessageBuffer.Enqueue(message);
+            }
+            //CefBrowser.GetMainFrame().ExecuteJavaScriptAsync("gameInstance.SendMessage(\"XJUnityUtilCenter\", \"OnMessageReceived\", \"" + message.EncodeToString() + "\")");
+            return Task.Run<string>(() =>
+            {
+                while (true)
+                {
+                    lock (_ResponseMessagesLock)
+                    {
+                        if (_ResponseMessages.ContainsKey(message.Uuid))
+                        {
+                            var responseMessage = _ResponseMessages[message.Uuid];
+                            _ResponseMessages.Remove(message.Uuid);
+                            lock (_WaitForResultMessagesLock)
+                            {
+                                _WaitForResultMessages.Remove(message.Uuid);
+                            }
+                            return responseMessage.ValueList[0];
+                        }
+                    }
+
+                }
             });
         }
     }
