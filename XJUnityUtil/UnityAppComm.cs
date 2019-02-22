@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -57,14 +56,27 @@ namespace XJUnityUtil
 
             public string EncodeToString()
             {
-                return JsonConvert.SerializeObject(this);
-                
+                //return JsonConvert.SerializeObject(this);
+                XmlSerializer writer = new XmlSerializer(typeof(Message));
+                using (StringWriter sw = new StringWriter())
+                {
+                    writer.Serialize(sw, this);
+                    System.Diagnostics.Debug.WriteLine(sw.GetStringBuilder().ToString());
+                    return sw.ToString();
+                }
+
+
             }
 
             public static Message FromString(string encodedMessageString)
             {
+                /*
                 Message m = JsonConvert.DeserializeObject<Message>(encodedMessageString);
                 return m;
+                */
+                StringReader sr = new StringReader(encodedMessageString);
+                XmlSerializer serializer = new XmlSerializer(typeof(Message));
+                return serializer.Deserialize(sr) as Message;
 
             }
         }

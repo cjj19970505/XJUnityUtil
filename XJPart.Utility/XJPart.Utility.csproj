@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Platforms>AnyCPU;x64</Platforms>
+    <AssemblyName>XJPart</AssemblyName>
+    <RootNamespace>XJPart</RootNamespace>
   </PropertyGroup>
 
 </Project>
