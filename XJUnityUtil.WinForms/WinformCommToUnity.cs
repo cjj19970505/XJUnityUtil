@@ -12,7 +12,7 @@ namespace XJUnityUtil.WinForms
 {
     public class WinformCommToUnity : ICommToUnity
     {
-        public event EventHandler<string> Received;
+        public event EventHandler<UnityAppCommManager.Message> Received;
 
         public ChromiumWebBrowser CefBrowser { get; }
 
@@ -105,7 +105,7 @@ namespace XJUnityUtil.WinForms
                 }
                 else
                 {
-                    WinformCommToUnity.Received?.Invoke(WinformCommToUnity, s);
+                    WinformCommToUnity.Received?.Invoke(WinformCommToUnity, message);
                 }
                 
             }

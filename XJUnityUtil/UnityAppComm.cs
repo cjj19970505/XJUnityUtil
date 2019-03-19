@@ -61,7 +61,7 @@ namespace XJUnityUtil
                 using (StringWriter sw = new StringWriter())
                 {
                     writer.Serialize(sw, this);
-                    System.Diagnostics.Debug.WriteLine(sw.GetStringBuilder().ToString());
+                    //System.Diagnostics.Debug.WriteLine(sw.GetStringBuilder().ToString());
                     return sw.ToString();
                 }
 

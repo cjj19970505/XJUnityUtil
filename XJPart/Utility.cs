@@ -12,7 +12,7 @@ namespace XJPart
             using (StringWriter sw = new StringWriter())
             {
                 writer.Serialize(sw, obj);
-                System.Diagnostics.Debug.WriteLine(sw.GetStringBuilder().ToString());
+                //System.Diagnostics.Debug.WriteLine(sw.GetStringBuilder().ToString());
                 return sw.ToString();
             }
         }

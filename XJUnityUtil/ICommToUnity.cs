@@ -11,7 +11,7 @@ namespace XJUnityUtil
     /// </summary>
     public interface ICommToUnity
     {
-        event EventHandler<string> Received;
+        event EventHandler<UnityAppCommManager.Message> Received;
 
         void SendStringMessage(params string[] values);
         Task<string> SendStringMessageForResultAsync(params string[] values);
@@ -24,7 +24,7 @@ namespace XJUnityUtil
     public interface ICommToApplication
     {
         event CommToApplicationReceiveMessageHandler Received;
-        void SendStringMessage(string value);
+        void SendStringMessage(params string[] values);
         void SendResult(UnityAppCommManager.Message message, string responseValue);
     }
 }

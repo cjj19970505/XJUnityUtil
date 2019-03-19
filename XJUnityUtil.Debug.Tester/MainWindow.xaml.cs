@@ -30,7 +30,7 @@ namespace XJUnityUtil.Debug.Tester
             localBackendCommToUnity.Received += _OnReceived;
         }
 
-        private void _OnReceived(object sender, string e)
+        private void _OnReceived(object sender, UnityAppCommManager.Message e)
         {
             System.Diagnostics.Debug.WriteLine(e);
         }

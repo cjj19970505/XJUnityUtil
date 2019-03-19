@@ -11,7 +11,7 @@ namespace XJUnityUtil.Debug
 {
     public class LocalBackendCommToUnity : ICommToUnity
     {
-        public event EventHandler<string> Received;
+        public event EventHandler<Message> Received;
 
         public UnityAppCommManager UnityAppCommManager { get; }
         public Queue<Message> _UnfetchedMessageBuffer;
@@ -118,7 +118,7 @@ namespace XJUnityUtil.Debug
                                     }
                                     else
                                     {
-                                        Received?.Invoke(this, message.ValueList[0]);
+                                        Received?.Invoke(this, message);
                                     }
                                 }
                             }
